@@ -1,14 +1,14 @@
-import google.generativeai as genai
+from openai import OpenAI
 
-# Put your Gemini API key here
-genai.configure(api_key="AIzaSyD_x7Hi3hPS5vC88BFMhNfs4PQn-k9AjxU")
-
-model = genai.GenerativeModel("gemini-1.5-flash")
+client = OpenAI(
+    api_key="sk-0e11872154b3481fb92bf9036578b546",
+    base_url="https://api.deepseek.com"
+)
 
 def generate_recommendations(resume_text, jd):
 
     prompt = f"""
-    Compare the following resume with the job description.
+    Compare the resume with the job description.
 
     Resume:
     {resume_text}
@@ -16,9 +16,17 @@ def generate_recommendations(resume_text, jd):
     Job Description:
     {jd}
 
-    Give suggestions to improve the resume and list missing skills.
+    Give:
+    - Matching score
+    - Missing skills
+    - Suggestions
     """
 
-    response = model.generate_content(prompt)
+    response = client.chat.completions.create(
+        model="deepseek-chat",
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
+    )
 
-    return response.text
+    return response.choices[0].message.content
