@@ -4,22 +4,16 @@ import ResultPage from "./components/ResultPage";
 
 function App() {
 
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState("");
 
   return (
-
     <div>
 
-      <h1>AI Resume Analyzer</h1>
+      <UploadResume setResult={setResult} />
 
-      {result ? (
-        <ResultPage data={result} />
-      ) : (
-        <UploadResume setResult={setResult} />
-      )}
+      {result && <ResultPage result={result} />}
 
     </div>
-
   );
 }
 

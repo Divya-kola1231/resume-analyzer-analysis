@@ -4,33 +4,25 @@ import axios from "axios";
 function UploadResume({ setResult }) {
 
   const [resume, setResume] = useState(null);
-  const [jd, setJD] = useState("");
+  const [jd, setJd] = useState("");
+const handleSubmit = async () => {
 
-  const handleSubmit = async () => {
+  const formData = new FormData();
+  formData.append("resume", resume);
+  formData.append("job_description", jd);
 
-    if (!resume) {
-      alert("Please upload a resume");
-      return;
+  const response = await axios.post(
+    "http://127.0.0.1:8000/api/analyze/",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     }
+  );
 
-    try {
-
-      const formData = new FormData();
-      formData.append("resume", resume);
-      formData.append("job_description", jd);
-
-      const res = await axios.post(
-        "http://127.0.0.1:8000/api/analyze/",
-        formData
-      );
-
-      setResult(res.data);
-
-    } catch (error) {
-      console.error(error);
-      alert("Analysis failed");
-    }
-  };
+  console.log(response.data);
+};
 
   return (
     <div>
@@ -44,7 +36,7 @@ function UploadResume({ setResult }) {
 
       <textarea
         placeholder="Paste Job Description"
-        onChange={(e) => setJD(e.target.value)}
+        onChange={(e) => setJd(e.target.value)}
       />
 
       <button onClick={handleSubmit}>

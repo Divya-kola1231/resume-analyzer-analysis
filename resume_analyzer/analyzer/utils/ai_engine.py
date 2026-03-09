@@ -1,32 +1,41 @@
-from openai import OpenAI
+import os
+import google.generativeai as genai
 
-client = OpenAI(
-    api_key="sk-0e11872154b3481fb92bf9036578b546",
-    base_url="https://api.deepseek.com"
-)
+# configure API key
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+
+# load model
+model = genai.GenerativeModel("gemini-1.5-flash-latest")
+
 
 def generate_recommendations(resume_text, jd):
 
     prompt = f"""
-    Compare the resume with the job description.
+You are an ATS resume analyzer.
 
-    Resume:
-    {resume_text}
+Compare the candidate resume with the job description.
 
-    Job Description:
-    {jd}
+Job Description:
+{jd}
 
-    Give:
-    - Matching score
-    - Missing skills
-    - Suggestions
-    """
+Candidate Resume:
+{resume_text}
 
-    response = client.chat.completions.create(
-        model="deepseek-chat",
-        messages=[
-            {"role": "user", "content": prompt}
-        ]
-    )
+Return:
 
-    return response.choices[0].message.content
+1. ATS Match Score (0-100)
+
+2. Matching Skills
+
+3. Missing Skills
+
+4. Resume Strengths
+
+5. Suggestions to Improve Resume
+
+6. Final Recommendation
+"""
+
+    response = model.generate_content(prompt)
+
+    return response.text

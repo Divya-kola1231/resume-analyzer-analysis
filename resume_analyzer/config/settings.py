@@ -24,7 +24,6 @@ SECRET_KEY = 'django-insecure-v2ueezof8d($uyv5=#7_^w7_h95+c9manzg=66$ddg_%+!avox
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALLOWED_HOSTS = []
 
 
@@ -54,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'resume_analyzer.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -71,11 +70,11 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'resume_analyzer.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases 
 
 DATABASES = {
     'default': {
@@ -129,4 +128,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-GEMINI_API_KEY = "AIzaSyB4As1G0j2anQqnHI7iJ3pPRGBszFWzuBc"
