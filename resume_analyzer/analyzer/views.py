@@ -9,9 +9,7 @@ import json
 
 @csrf_exempt
 def analyze_resume(request):
-
     if request.method == "POST":
-
         resume_file = request.FILES.get("resume")
         jd = request.POST.get("job_description", "")
 
@@ -19,36 +17,16 @@ def analyze_resume(request):
             return JsonResponse({"error": "Missing resume file"})
 
         resume_text = extract_resume_text(resume_file)
-
         analysis = generate_recommendations(resume_text, jd)
 
+        # Auto-suggest roles from extracted skills
+        roles_raw = suggest_roles(analysis, "")
+        role_list = [r.strip() for r in roles_raw.split("\n") if r.strip()]
+
         return JsonResponse({
-            "analysis": analysis
+            "analysis": analysis,
+            "suggested_roles": role_list
         })
-
-    return JsonResponse({"message": "Invalid request"})
-
-
-@csrf_exempt
-def suggest_roles_view(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            skills = data.get("skills", [])
-            interests = data.get("interests", [])
-
-            if not skills or not interests:
-                return JsonResponse({"error": "Missing skills or interests"})
-
-            skills_text = "\n".join(skills)
-            interests_text = "\n".join(interests)
-
-            roles = suggest_roles(skills_text, interests_text)
-            role_list = [r.strip() for r in roles.split("\n") if r.strip()]
-
-            return JsonResponse({"roles": role_list})
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"message": "Invalid request"})
 
@@ -59,13 +37,14 @@ def fetch_jobs_view(request):
         try:
             data = json.loads(request.body)
             roles = data.get("roles", [])
-            location = data.get("location", "India")  # Default to India if not specified
-            
+            location = data.get("location", "India")
+            experience = data.get("experience", None)  # ← NEW: experience filter
+
             if not roles:
                 return JsonResponse({"error": "Missing roles for job search"})
 
-            jobs = fetch_jobs(roles, location)
-            
+            jobs = fetch_jobs(roles, location, experience)  # ← pass experience
+
             return JsonResponse({"jobs": jobs})
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
